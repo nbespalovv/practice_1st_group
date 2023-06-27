@@ -17,3 +17,4 @@ def reply_start_command(message: Message):
 
 
 bot.infinity_polling()
+# Вставил комментарий
