@@ -10,19 +10,14 @@ class Users(Base):
     user_id = Column(Integer, primary_key=True)
     user_first_name = Column(String(250))
 
-
-class Book(Base):
-    __tablename__ = 'Books'
-
-    id_book = Column(Integer, primary_key=True)
-    title = Column(String(250), nullable=False)
-    genre = Column(String(250))
-    price = Column(Integer, nullable=False)
-
 class BotDB:
-    def __init__(self,username,password,db):
+    def __init__(self):
         self.users = Users
-        self.book = Book
+        f = open('config.txt')
+        username = f.readline().replace('\n', '')
+        password = f.readline().replace('\n', '')
+        db = f.readline().replace('\n', '')
+        f.close()
         engine = create_engine(f"mysql+pymysql://{username}:{password}@{db}")
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
