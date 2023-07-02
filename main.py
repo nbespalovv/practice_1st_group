@@ -4,7 +4,7 @@ from telebot.types import Message
 
 token = '6001783957:AAGjtyLX2728zncYkhCDMIq0_MsasMBtOY0'
 bot = TeleBot(token)
-db = BotDB('db_file')
+db = BotDB()
 
 
 @bot.message_handler(commands=['start'])
