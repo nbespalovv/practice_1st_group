@@ -10,6 +10,8 @@ class Users(Base):
     __tablename__ = 'users'
     user_id = Column(Integer, primary_key=True)
     user_nickname = Column(String(250))
+    points = Column(Integer, default=50)
+    role = Column(String(20), default='user')
 
 
 class Logs(Base):
