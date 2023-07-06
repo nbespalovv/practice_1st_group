@@ -62,6 +62,19 @@ class BotDB:
             return True
         else:
             return False
+    def add_film(self, info_films):
+        film = Films(id_film =info_films[0] ,name =info_films[1] ,parental_control = info_films[2],country = info_films[3], genre = info_films[4])
+        self.session.add(film)
+        self.session.commit()
+    def add_actor(self, info_films):
+        actor = Actor(id_actor =info_films[0], name =info_films[1], gender =info_films[2], birthdate =info_films[3], id_films =info_films[4])
+        self.session.add(actor)
+        self.session.commit()
+
+    def add_actor_friend(self, info_films):
+        actor = Actor(id_actor=info_films[0], name=info_films[1], gender=info_films[2], birthdate=info_films[3])
+        self.session.add(actor)
+        self.session.commit()
 
     def close(self):
         self.session.close()
