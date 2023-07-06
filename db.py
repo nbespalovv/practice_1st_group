@@ -1,26 +1,7 @@
-from sqlalchemy import create_engine, select, Table, Column, Integer, DateTime, String, MetaData, ForeignKey
+from sqlalchemy import create_engine, select, func, literal
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from models import Users,Logs, Base
 from datetime import datetime
-
-Base = declarative_base()
-
-
-class Users(Base):
-    __tablename__ = 'users'
-    user_id = Column(Integer, primary_key=True)
-    user_nickname = Column(String(250))
-    points = Column(Integer, default=50)
-    role = Column(String(20), default='user')
-
-
-class Logs(Base):
-    __tablename__ = 'logs'
-    log_id = Column(Integer, primary_key=True, autoincrement=True)
-    user_nickname = Column(String(250))
-    user_id = Column(Integer, ForeignKey('users.user_id'))
-    message_text = Column(String(1000))
-    message_time = Column(String(100))
 
 
 class BotDB:
@@ -34,28 +15,24 @@ class BotDB:
         f.close()
         engine = create_engine(f"mysql+pymysql://{username}:{password}@{db}")
         Base.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
-        self.session = Session()
+        session = sessionmaker(bind=engine)
+        self.session = session()
 
     def user_exist(self, user_id):
-        stmt = select(self.users).where(self.users.user_id == user_id)
-        result = self.session.execute(stmt).fetchone()
-        if result is not None:
+        user = self.session.query(self.users).filter_by(user_id=user_id).first()
+        if user:
             return True
         else:
             return False
 
-    def user_add(self, user_id, user_nickname):
-        user = self.users(user_id=user_id, user_nickname=user_nickname)
+    def user_add(self, user_id, username):
+        user = self.users(user_id=user_id, username=username)
         self.session.add(user)
         self.session.commit()
 
     def get_user(self, user_id):
         user = self.session.query(self.users).filter_by(user_id=user_id).first()
-        if user:
-            return user.user_first_name
-        else:
-            return None
+        return user
 
     def delete_user(self, user_id):
         user = self.session.query(self.users).filter_by(user_id=user_id).first()
@@ -66,11 +43,23 @@ class BotDB:
         else:
             return False
 
-    def add_log(self, user_nickname, user_id, message_text, message_time):
-        log = self.logs(user_nickname=user_nickname, user_id=user_id, message_text=message_text,
-                        message_time=datetime.fromtimestamp(message_time).strftime('%H:%M - %m.%d.%Y'))
+    def add_log(self, username, user_id, message_text, message_time):
+        log = Logs(username=username, user_id=user_id, message_text=message_text,
+                   message_time=datetime.fromtimestamp(int(message_time)).strftime('%H:%M - %m.%d.%Y'))
         self.session.add(log)
         self.session.commit()
+
+    def get_log(self, log_id):
+        log = self.session.query(self.logs).filter_by(log_id=log_id).first()
+        return log
+    def delete_log(self, log_id):
+        log = self.session.query(self.logs).filter_by(log_id=log_id).first()
+        if log:
+            self.session.delete(log)
+            self.session.commit()
+            return True
+        else:
+            return False
 
     def close(self):
         self.session.close()
