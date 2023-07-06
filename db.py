@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine, select, func, literal
 from sqlalchemy.orm import sessionmaker
-from models import Users,Logs, Base
+from sqlalchemy.ext.declarative import declarative_base
+from models import Users,Logs,Films,Actor,Actor_Friend,Base
 from datetime import datetime
-
-
 class BotDB:
     def __init__(self):
         self.users = Users
@@ -24,7 +23,6 @@ class BotDB:
             return True
         else:
             return False
-
     def user_add(self, user_id, username):
         user = self.users(user_id=user_id, username=username)
         self.session.add(user)
@@ -52,6 +50,7 @@ class BotDB:
     def get_log(self, log_id):
         log = self.session.query(self.logs).filter_by(log_id=log_id).first()
         return log
+
     def delete_log(self, log_id):
         log = self.session.query(self.logs).filter_by(log_id=log_id).first()
         if log:
