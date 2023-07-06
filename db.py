@@ -6,7 +6,7 @@ from datetime import datetime
 class BotDB:
     def __init__(self):
         self.films = Films
-        self.actor = Actor
+        self.actors = Actor
         self.actor_friend = Actor_Friend
         self.users = Users
         self.logs = Logs
@@ -62,10 +62,23 @@ class BotDB:
             return True
         else:
             return False
+    def film_exist(self, id_film):
+        film = self.session.query(self.films).filter_by(id_film=id_film).first()
+        if film:
+            return True
+        else:
+            return False
     def add_film(self, info_films):
         film = Films(id_film =info_films[0] ,name =info_films[1] ,parental_control = info_films[2],country = info_films[3], genre = info_films[4])
         self.session.add(film)
         self.session.commit()
+
+    def actor_exist(self, id_actor):
+        actor = self.session.query(self.actors).filter_by(id_actor=id_actor).first()
+        if actor:
+            return True
+        else:
+            return False
     def add_actor(self, info_films):
         actor = Actor(id_actor =info_films[0], name =info_films[1], gender =info_films[2], birthdate =info_films[3], id_films =info_films[4])
         self.session.add(actor)
