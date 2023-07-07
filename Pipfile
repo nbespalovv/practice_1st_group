@@ -6,6 +6,11 @@ name = "pypi"
 [packages]
 selenium = "*"
 pytelegrambotapi = "*"
+bs4 = "*"
+redis = "*"
+flower = "*"
+sqlalchemy = "*"
+pymysql = "*"
 
 [dev-packages]
 
