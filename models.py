@@ -12,6 +12,7 @@ class Films(Base):
     parental_control = Column(PickleType)
     country = Column(JSON)
     genre = Column(JSON)
+    employees = Column(PickleType)
 
 class Actor(Base):
     __tablename__ = 'actor'

@@ -70,9 +70,7 @@ class BotDB:
         else:
             return False
     def add_film(self, info_films):
-        country = json.dumps(info_films[3])
-        genre = json.dumps(info_films[4])
-        film = Films(name =info_films[0] ,id_film=info_films[1] ,parental_control = info_films[2],country = country, genre = genre)
+        film = Films(name =info_films[0] ,id_film=info_films[1] ,parental_control = info_films[2],country = info_films[3], genre = info_films[4], employees = info_films[5])
         self.session.add(film)
         self.session.commit()
 
@@ -88,7 +86,7 @@ class BotDB:
         self.session.commit()
 
     def add_actor_friend(self, info_actor):
-        actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3])
+        actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3], id_actor = info_actor[4][0])
         self.session.add(actor)
         self.session.commit()
 
