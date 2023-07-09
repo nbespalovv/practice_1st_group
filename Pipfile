@@ -4,13 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-selenium = "*"
-pytelegrambotapi = "*"
-bs4 = "*"
+celery = "*"
+alembic = "*"
 redis = "*"
-flower = "*"
+bs4 = "*"
 sqlalchemy = "*"
+selenium = "*"
+fastapi = "*"
+uvicorn = {version = "*", extras = ["standard"]}
 pymysql = "*"
+requests = "*"
+flower = "*"
 
 [dev-packages]
 
