@@ -15,6 +15,7 @@ uvicorn = {version = "*", extras = ["standard"]}
 pymysql = "*"
 requests = "*"
 flower = "*"
+pytelegrambotapi = "*"
 
 [dev-packages]
 

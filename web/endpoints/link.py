@@ -12,7 +12,7 @@ router = APIRouter(prefix="/parse")
 @router.get("/")
 async def parse_endpoint(name: str):
     try:
-        task = parse_website.delay(name)  # не ебу че туда закинуть пока что
+        task = parse_website.delay(name)
         return task.id
     except HTTPException as e:
         raise e

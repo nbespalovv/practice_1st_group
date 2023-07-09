@@ -1,28 +1,21 @@
+import json
 import re
 import time
 
-from bs4 import BeautifulSoup as bs
-from celery import Celery
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from celery import Celery
 import requests
 from bs4 import BeautifulSoup
 from bs4 import BeautifulSoup as bs
+from celery import Celery
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import sqlite3
-import random
-import re
-import time
-from sqlalchemy import create_engine, select, Table, Column, Integer, DateTime, String,Date,JSON,PickleType, MetaData, ForeignKey
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
+from selenium.webdriver.chrome.options import Options
+
 from web.db import BotDB
-import json
+
+options = Options()
+options.headless = True
+
 
 class Crawler:
     def __init__(self, url):
@@ -30,7 +23,7 @@ class Crawler:
 
     def get_soup(self):
         soup = BeautifulSoup(requests.get(self.url).text, "html.parser")
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(options)
         driver.get(self.url)
         source_data = driver.page_source
         soup = bs(source_data)
@@ -82,8 +75,7 @@ class Parser:
 
     # получение ссылки для определенного актера, имя которого вводит пользователь
     def get_link_actor(self, name):
-
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(options)
         driver.get('https://ru.kinorium.com/')
         input_tab = driver.find_element(By.CLASS_NAME, 'ui-autocomplete-input')
         input_tab.send_keys(name)

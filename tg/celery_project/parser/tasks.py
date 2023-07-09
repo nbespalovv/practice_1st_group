@@ -1,6 +1,6 @@
 from celery import Celery
 import requests
-from db import BotDB
+from tg.db import BotDB
 from bs4 import BeautifulSoup
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
