@@ -20,8 +20,8 @@ import time
 from sqlalchemy import create_engine, select, Table, Column, Integer, DateTime, String,Date,JSON,PickleType, MetaData, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from models import Users,Logs,Films,Actor,Base
 from datetime import datetime
+from db import BotDB
 import json
 
 class Crawler:

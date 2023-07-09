@@ -24,21 +24,18 @@ class Actor(Base):
     id_film = Column(JSON)
 
 
-class Actor_Friend(Base):
-    __tablename__ = 'actor_friend'
-    id_friend_actor = Column(Integer, primary_key=True)
-    name = Column(String(250))
-    gender = Column(String(20))
-    birthdate = Column(Date)
-    id_actor = Column(Integer, ForeignKey('actor.id_actor'))
-
-    
 class Users(Base):
     __tablename__ = 'users'
     user_id = Column(Integer, primary_key=True)
     username = Column(String(250))
+    age = Column(Integer,default=0)
+    reg_data = Column(Date)
+    email = Column(String(50),default="Отсутствует")
+    phone = Column(String(20),default="Отсутствует")
+    history = Column(JSON)
+    favourite = Column(JSON)
     points = Column(Integer, default=50)
-    role = Column(String(20), default='user')
+    role = Column(String(20), default='User')
 class Logs(Base):
     __tablename__ = 'logs'
     log_id = Column(Integer, primary_key=True, autoincrement=True)

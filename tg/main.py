@@ -1,7 +1,6 @@
 from telebot import TeleBot
-from db import BotDB
 from telebot.types import Message
-
+from db import BotDB
 token = '6001783957:AAGjtyLX2728zncYkhCDMIq0_MsasMBtOY0'
 bot = TeleBot(token)
 db = BotDB()
