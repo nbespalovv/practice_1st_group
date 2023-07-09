@@ -22,7 +22,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from models import Users,Logs,Films,Actor,Base
 from datetime import datetime
-from db import BotDB
 import json
 
 class Crawler:
@@ -249,4 +248,4 @@ celery = Celery('web', broker='redis://localhost:6379')
 @celery.task
 def parse_website(name):
     print(f"Запущен процесс на имя {name}")
-    Ctrl().get_link_and_parse(name, 2)
+    C().get_link_and_parse(name, 2)
