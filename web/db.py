@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, select, Table, Column, Integer, DateTime, String,Date,JSON,PickleType, MetaData, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from models import Users,Logs,Films,Actor,Base
+from web.models import Users,Logs,Films,Actor,Base
 from datetime import datetime
 import json
 class BotDB:
@@ -10,12 +10,12 @@ class BotDB:
         self.actors = Actor
         self.users = Users
         self.logs = Logs
-        f = open('config.txt')
-        username = f.readline().replace('\n', '')
-        password = f.readline().replace('\n', '')
-        db = f.readline().replace('\n', '')
-        f.close()
-        engine = create_engine(f"mysql+pymysql://{username}:{password}@{db}")
+        #f = open('config.txt')
+        #username = f.readline().replace('\n', '')
+        #password = f.readline().replace('\n', '')
+        #db = f.readline().replace('\n', '')
+        #f.close()
+        engine = create_engine(f"mysql+pymysql://root:password@localhost:3306/kinorium")
         Base.metadata.create_all(engine)
         session = sessionmaker(bind=engine)
         self.session = session()

@@ -21,7 +21,7 @@ from sqlalchemy import create_engine, select, Table, Column, Integer, DateTime, 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-from db import BotDB
+from web.db import BotDB
 import json
 
 class Crawler:

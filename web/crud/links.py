@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from core.db.models import Link
+from web.core.db.models import Link
 
 
 def create_link(db: Session, url: str) -> Link:
