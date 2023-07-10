@@ -3,6 +3,7 @@ from db import BotDB
 from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton,InlineKeyboardButton, InlineKeyboardMarkup
 from celery_project.parser.tasks import parse_website
 from datetime import datetime
+from visualization import draw_social_graph
 
 token = '6001783957:AAGjtyLX2728zncYkhCDMIq0_MsasMBtOY0'
 bot = TeleBot(token)
@@ -67,12 +68,13 @@ def activity(call):
 def activity_step(message, call):
     time = int(message.text)
     total_activity = 0
+    total_activity = 0
     users = db.session.query(db.users).all()
     for user in users:
         history = user.history
         if history!=None:
             for event in history:
-                event_date = datetime(user.event[1].year, user.event[1].month, user.event[1].day)
+                event_date = datetime.fromtimestamp(event[1])
                 now_date = datetime.now()
                 a =  now_date-event_date
                 if a.days<=time:
@@ -140,10 +142,34 @@ def search(call):
 
 def search_step(message, call):
     actor = message.text
-    parse_website(actor)
-    bot.send_message(message.chat.id, 'Поиск начат!!')
-    profile(call)
+    time = datetime.now().timestamp()
+    event = [[actor,time]]
 
+    bot.send_message(message.chat.id, 'Поиск начат!!')
+    #parse_website(actor)
+    #draw_social_graph(actor)
+    bot.send_message(message.chat.id, 'Поиск выполнен\nХотите добавить поиск в избранное?\nДа/Нет')
+    bot.register_next_step_handler(message, history_add_step, call,event)
+def history_add_step(message, call,event):
+    answer = message.text
+    user = db.get_user(message.chat.id)
+    user.points = user.points-1
+    # Check if history already exists, create list if not
+    if not user.history:
+        user.history = []
+
+    # Append new event to history
+    user.history.extend(event)
+
+    if answer == 'Да':
+        if not user.favourite:
+            user.favourite = []
+
+        # Append new event to history
+        user.favourite.extend(event)
+    db.user_update(user)
+    bot.send_message(message.chat.id, 'Запрос выполнен успешно! С вашего счета снимается 1 токен')
+    show_main_menu(call)
 @bot.callback_query_handler(func=lambda call: call.data == 'main_menu_btn')
 def show_main_menu(call):
     bot.send_message(call.message.chat.id, 'Главное меню', reply_markup=main_menu)
@@ -224,12 +250,14 @@ def show_history(call):
     history = user.history
 
     text = 'Ваша история:\n'
-    if history!=None:
+    if history:
         for event in history:
-            text += f'{event[0]} - {event[1]}\n'
+            date = datetime.fromtimestamp(event[1])
+            text += f'{event[0]} - {date}\n'
             bot.send_message(call.message.chat.id, text, parse_mode='HTML')
     else:
         bot.send_message(call.message.chat.id, "История пуста!")
+    profile(call)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'favourite_btn')
@@ -237,12 +265,14 @@ def show_favourite(call):
     user = db.get_user(call.message.chat.id)
     favourite = user.favourite
     text = 'Ваше избранное:\n'
-    if favourite != None:
+    if favourite:
         for event in favourite:
-            text += f'{event[0]} - {event[1]}\n'
+            date = datetime.fromtimestamp(event[1])
+            text += f'{event[0]} - {date}\n'
             bot.send_message(call.message.chat.id, text, parse_mode='HTML')
     else:
         bot.send_message(call.message.chat.id, "Избранные пусты!")
+    profile(call)
 @bot.message_handler(func=lambda message: True)
 def log_message(message: Message):
     if db.user_exist(message.chat.id):

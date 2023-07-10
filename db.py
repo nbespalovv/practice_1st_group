@@ -46,6 +46,8 @@ class BotDB:
     def user_update(self, user):
         user_db = self.session.query(self.users).filter_by(user_id=user.user_id).first()
         user_db = user
+        self.session.delete(user_db)
+        self.session.add(user)
         self.session.commit()
 
     def add_log(self, username, user_id, message_text, message_time):
