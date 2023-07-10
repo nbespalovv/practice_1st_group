@@ -10,12 +10,7 @@ class BotDB:
         self.actors = Actor
         self.users = Users
         self.logs = Logs
-        f = open('config.txt')
-        username = f.readline().replace('\n', '')
-        password = f.readline().replace('\n', '')
-        db = f.readline().replace('\n', '')
-        f.close()
-        engine = create_engine(f"mysql+pymysql://{username}:{password}@{db}")
+        engine = create_engine(f"mysql+pymysql://root:password@localhost:3306/kinorium")
         Base.metadata.create_all(engine)
         session = sessionmaker(bind=engine)
         self.session = session()

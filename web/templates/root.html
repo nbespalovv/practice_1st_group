@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block head %}{% endblock %}
+    <title>Авторизация</title>
+</head>
+<body>
+    <nav class="flex justify-between text-3xl my-3">
+        <ul class="flex ml-10">
+            <li>Кинориум</li>
+        </ul>
+    </nav>
+    <hr>
+
+    <div class="flex items-center justify-center h-screen">
+        <div>
+            <h2>
+            Добро пожаловать!<br>
+            Зарегистрируйтесь!
+        </h2><br>
+        <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="practice_1st_csu_bot" data-size="medium" data-auth-url="/tglogin/" data-request-access="write"></script>
+        {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

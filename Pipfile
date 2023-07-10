@@ -16,6 +16,7 @@ pymysql = "*"
 requests = "*"
 flower = "*"
 pytelegrambotapi = "*"
+jinja2 = "*"
 
 [dev-packages]
 

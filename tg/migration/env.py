@@ -1,5 +1,4 @@
-
-from db import *
+from db import Base
 
 from logging.config import fileConfig
 
@@ -14,11 +13,10 @@ config = context.config
 
 # here we allow ourselves to pass interpolation vars to alembic.ini
 # fron the host env
-f = open('config.txt')
-username = f.readline().replace('\n', '')
-password = f.readline().replace('\n', '')
-db = f.readline().replace('\n', '')
-f.close()
+username = "root"
+password = "password"
+db = "localhost:3306/kinorium"
+
 section = config.config_ini_section
 config.set_section_option(section, "DB_USERNAME", username)
 config.set_section_option(section, "DB_PASSWORD", password)

@@ -1,12 +1,15 @@
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from endpoints.link import router as parser_router
+from web.endpoints.pages import router as pages_router
+from web.endpoints.tglogin import router as tg_router
+
 import uvicorn
 
 app = FastAPI()
 
 app.include_router(parser_router, tags=["Parser"])
-
+app.include_router(pages_router, tags=["Pages"])
+app.include_router(tg_router, tags=["tglogin"])
 
 @app.get("/")
 async def root():

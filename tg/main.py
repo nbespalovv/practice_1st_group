@@ -1,6 +1,6 @@
 from telebot import TeleBot
 from db import BotDB
-from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton,InlineKeyboardButton, InlineKeyboardMarkup
+from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from celery_project.parser.tasks import parse_website
 
 token = '6001783957:AAGjtyLX2728zncYkhCDMIq0_MsasMBtOY0'
