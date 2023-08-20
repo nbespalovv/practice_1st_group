@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine, select, Table, Column, Integer, DateTime, String,Date,JSON,PickleType, MetaData, ForeignKey
+from sqlalchemy import create_engine, select, Table, Column, Integer, DateTime, String, Date, JSON, PickleType, \
+    MetaData, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from models import Users,Logs,Films,Actor,Base
+from models import Users, Logs, Films, Actor, Base
 from datetime import datetime
 import json
 
@@ -23,8 +24,9 @@ class BotDB:
             return True
         else:
             return False
-    def user_add(self, user_id, username,role):
-        user = self.users(user_id=user_id, username=username,role=role, reg_data=datetime.now())
+
+    def user_add(self, user_id, username, role):
+        user = self.users(user_id=user_id, username=username, role=role, reg_data=datetime.now())
         self.session.add(user)
         self.session.commit()
 
@@ -40,6 +42,7 @@ class BotDB:
             return True
         else:
             return False
+
     def user_update(self, user):
         user_db = self.session.query(self.users).filter_by(user_id=user.user_id).first()
         user_db = user
@@ -63,14 +66,17 @@ class BotDB:
             return True
         else:
             return False
+
     def film_exist(self, id_film):
         film = self.session.query(self.films).filter_by(id_film=id_film).first()
         if film:
             return True
         else:
             return False
+
     def add_film(self, info_films):
-        film = Films(name =info_films[0] ,id_film=info_films[1] ,parental_control = info_films[2],country = info_films[3], genre = info_films[4], employees = info_films[5])
+        film = Films(name=info_films[0], id_film=info_films[1], parental_control=info_films[2], country=info_films[3],
+                     genre=info_films[4], employees=info_films[5])
         self.session.add(film)
         self.session.commit()
 
@@ -84,8 +90,10 @@ class BotDB:
             return True
         else:
             return False
+
     def add_actor(self, info_actor):
-        actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3], id_film =info_actor[4])
+        actor = Actor(id_actor=info_actor[0][0], name=info_actor[1], gender=info_actor[2], birthdate=info_actor[3],
+                      id_film=info_actor[4])
         self.session.add(actor)
         self.session.commit()
 
@@ -97,17 +105,13 @@ class BotDB:
         actor = self.session.query(self.actors)
         return actor
 
-
     def get_actors_by_film(self, film_id):
         actor = self.session.query(self.actors).filter(self.actors.id_film.like(f'%["{film_id}"]%')).all()
         return actor
 
-
-
-
-    #def add_actor_friend(self, info_actor):
-        #    actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3], id_actor = info_actor[4][0])
-        #    self.session.add(actor)
+    # def add_actor_friend(self, info_actor):
+    #    actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3], id_actor = info_actor[4][0])
+    #    self.session.add(actor)
     #   self.session.commit()
 
     def close(self):

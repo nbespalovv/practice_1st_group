@@ -1,3 +1,4 @@
+import datetime
 from typing import Any, Tuple, Union
 
 import networkx as nx
@@ -77,15 +78,16 @@ def get_actor_by_name_and_coworkers(name: str):
 
 
 if __name__ == '__main__':
-    actors_from_db = get_actor_by_name_and_coworkers('Евгений Шварц')  # получаем объекты актеров из бд
+    actors_from_db = get_actor_by_name_and_coworkers('Джейден Смит')  # получаем объекты актеров из бд
     actors = parse_actors(actors_from_db)  # парсим
     data = DFS(actors[0], [])  # обходим список актеров в глубину
 
     G = nx.Graph(data)  # пихаем всё в граф для отрисовки
 
-    fig = plt.figure(figsize=(100, 100), dpi=100)
-    position = nx.spring_layout(G, k=0.5, iterations=30)
+    fig = plt.figure(figsize=(100, 100), dpi=100)  # разрешение картиночки
+    position = nx.spring_layout(G, k=0.5, iterations=30)  # расположение картиночки
     nx.draw(G, pos=position, node_color='yellow', edge_color='black', font_size=30, font_color='black',
+            # отрисовка картиночки
             with_labels=True)
     plt.savefig(
-        '../../graph.png')  # картиночка
+        f'../all_graphs/graph-{datetime.datetime.now().strftime("%d-%m-%Y_%H-%M")}.png')  # картиночка
