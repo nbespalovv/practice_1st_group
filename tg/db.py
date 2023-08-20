@@ -4,6 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from models import Users,Logs,Films,Actor,Base
 from datetime import datetime
 import json
+
+
 class BotDB:
     def __init__(self):
         self.films = Films
@@ -72,6 +74,10 @@ class BotDB:
         self.session.add(film)
         self.session.commit()
 
+    def get_film(self, id_film):
+        film = self.session.query(self.films).filter_by(id_film=id_film).first()
+        return film
+
     def actor_exist(self, id_actor):
         actor = self.session.query(self.actors).filter_by(id_actor=id_actor).first()
         if actor:
@@ -82,6 +88,22 @@ class BotDB:
         actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3], id_film =info_actor[4])
         self.session.add(actor)
         self.session.commit()
+
+    def get_actor(self, name):
+        actor = self.session.query(self.actors).filter_by(name=name).first()
+        return actor
+
+    def get_actors(self):
+        actor = self.session.query(self.actors)
+        return actor
+
+
+    def get_actors_by_film(self, film_id):
+        actor = self.session.query(self.actors).filter(self.actors.id_film.like(f'%["{film_id}"]%')).all()
+        return actor
+
+
+
 
     #def add_actor_friend(self, info_actor):
         #    actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3], id_actor = info_actor[4][0])

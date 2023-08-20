@@ -22,7 +22,7 @@ class Crawler:
         driver = webdriver.Chrome()
         driver.get(self.url)
         source_data = driver.page_source
-        soup = bs(source_data)
+        soup = bs(source_data, features="html.parser")
 
         return soup
 
@@ -234,5 +234,5 @@ celery = Celery('celery_project', broker='redis://localhost:6379/0')
 
 @celery.task
 def parse_website(name):
-    test = C().get_link_and_parse(name,2)
+    test = C().get_link_and_parse(name,1)     #поменяно было 2
     return test
