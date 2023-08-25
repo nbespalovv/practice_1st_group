@@ -51,3 +51,6 @@ def draw_social_graph(actor_name):
     plt.show()
     #plt.savefig('C:/Users/1/Desktop/hfg.png')
 
+
+# Пример использования
+draw_social_graph("Сэм Нил")

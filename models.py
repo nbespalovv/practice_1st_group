@@ -9,10 +9,25 @@ class Films(Base):
     __tablename__ = 'films'
     id_film = Column(Integer, primary_key=True)
     name = Column(String(250))
-    parental_control = Column(PickleType)
-    country = Column(JSON)
-    genre = Column(JSON)
-    employees = Column(PickleType)
+
+class Film_Country(Base):
+    __tablename__ = 'film_country'
+    id_film_country = Column(Integer, primary_key=True, autoincrement=True)
+    id_film = Column(Integer, ForeignKey('films.id_film'))
+    country = Column(String(100))
+
+class Film_Genre(Base):
+    __tablename__ = 'film_genre'
+    id_film_genre = Column(Integer, primary_key=True, autoincrement=True)
+    id_film = Column(Integer, ForeignKey('films.id_film'))
+    genre = Column(String(100))
+
+class Parental_Control(Base):
+    __tablename__ = 'parental_control'
+    id_parental_control = Column(Integer, primary_key=True, autoincrement=True)
+    id_film = Column(Integer, ForeignKey('films.id_film'))
+    danger = Column(String(100))
+    level = Column(String(20))
 
 class Actor(Base):
     __tablename__ = 'actor'
@@ -20,8 +35,12 @@ class Actor(Base):
     name = Column(String(250))
     gender = Column(String(10))
     birthdate = Column(Date)
-    #id_film = Column(Integer, ForeignKey('films.id_film'))
-    id_film = Column(JSON)
+
+class Film_Actor(Base):
+    __tablename__ = 'film_actor'
+    id_film_actor = Column(Integer, primary_key=True, autoincrement=True)
+    id_actor = Column(Integer, ForeignKey('actor.id_actor'))
+    id_film = Column(Integer, ForeignKey('films.id_film'))
 
 
 class Users(Base):
@@ -32,10 +51,19 @@ class Users(Base):
     reg_data = Column(Date)
     email = Column(String(50),default="Отсутствует")
     phone = Column(String(20),default="Отсутствует")
-    history = Column(JSON)
-    favourite = Column(JSON)
     points = Column(Integer, default=50)
     role = Column(String(20), default='User')
+
+class History(Base):
+    __tablename__ = 'history'
+    id_history = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    request = Column(String(250))
+class Favourite(Base):
+    __tablename__ = 'favourite'
+    id_favourite = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    request = Column(String(250))
 class Logs(Base):
     __tablename__ = 'logs'
     log_id = Column(Integer, primary_key=True, autoincrement=True)
