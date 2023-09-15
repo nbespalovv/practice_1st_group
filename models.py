@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, Date, PickleType
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
@@ -59,11 +59,8 @@ class History(Base):
     id_history = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.user_id'))
     request = Column(String(250))
-class Favourite(Base):
-    __tablename__ = 'favourite'
-    id_favourite = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
-    request = Column(String(250))
+    date = Column(Date)
+    is_favourite = Column(Boolean, default=False)
 class Logs(Base):
     __tablename__ = 'logs'
     log_id = Column(Integer, primary_key=True, autoincrement=True)

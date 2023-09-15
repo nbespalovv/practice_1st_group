@@ -5,7 +5,7 @@ from celery_project.parser.tasks import parse_website
 from datetime import datetime
 from visualization import draw_social_graph
 
-token = '6001783957:AAGjtyLX2728zncYkhCDMIq0_MsasMBtOY0'
+token = '5995097596:AAFNDm8tv_31RkT7XbdeEupqrs8vezAUlwM'
 bot = TeleBot(token)
 db = BotDB()
 
@@ -67,18 +67,13 @@ def activity(call):
     bot.register_next_step_handler(msg, activity_step, call)
 def activity_step(message, call):
     time = int(message.text)
+    total_activity = 0 #один серый, другой белый, два веселых total_activity
     total_activity = 0
-    total_activity = 0
-    users = db.session.query(db.users).all()
-    for user in users:
-        history = user.history
-        if history!=None:
-            for event in history:
-                event_date = datetime.fromtimestamp(event[1])
-                now_date = datetime.now()
-                a =  now_date-event_date
-                if a.days<=time:
-                    total_activity += 1
+    history = db.get_all_history()
+    for query in history:
+        diff =datetime.now().date()-query.date
+        if diff.days<=time:
+            total_activity += 1
     bot.send_message(call.message.chat.id, f'За {time} дней активность составляет {total_activity} запросов',
                      reply_markup=manager_profile_keyboard)
 
@@ -142,31 +137,23 @@ def search(call):
 
 def search_step(message, call):
     actor = message.text
-    time = datetime.now().timestamp()
-    event = [[actor,time]]
+    time = datetime.now()
+    event = [actor,time]
 
     bot.send_message(message.chat.id, 'Поиск начат!!')
     #parse_website(actor)
     #draw_social_graph(actor)
     bot.send_message(message.chat.id, 'Поиск выполнен\nХотите добавить поиск в избранное?\nДа/Нет')
     bot.register_next_step_handler(message, history_add_step, call,event)
-def history_add_step(message, call,event):
+def history_add_step(message, call, event):
     answer = message.text
     user = db.get_user(message.chat.id)
-    user.points = user.points-1
-    # Check if history already exists, create list if not
-    if not user.history:
-        user.history = []
+    user.points = user.points - 1
 
-    # Append new event to history
-    user.history.extend(event)
+    # Create a new history entry
+    is_favourite = answer == 'Да'
+    db.add_history(user_id=user.user_id, request=event, is_favourite=is_favourite)
 
-    if answer == 'Да':
-        if not user.favourite:
-            user.favourite = []
-
-        # Append new event to history
-        user.favourite.extend(event)
     db.user_update(user)
     bot.send_message(message.chat.id, 'Запрос выполнен успешно! С вашего счета снимается 1 токен')
     show_main_menu(call)
@@ -246,15 +233,14 @@ def phone_step(message,call):
 
 @bot.callback_query_handler(func=lambda call: call.data == 'history_btn')
 def show_history(call):
-    user = db.get_user(call.message.chat.id)
-    history = user.history
+    history = db.get_history(call.message.chat.id)
 
     text = 'Ваша история:\n'
-    if history:
+    if len(history)!=0:
         for event in history:
-            date = datetime.fromtimestamp(event[1])
-            text += f'{event[0]} - {date}\n'
-            bot.send_message(call.message.chat.id, text, parse_mode='HTML')
+            #date = datetime.fromtimestamp(event[1])
+            text += f'{event.request} - {event.date}\n'
+        bot.send_message(call.message.chat.id, text, parse_mode='HTML')
     else:
         bot.send_message(call.message.chat.id, "История пуста!")
     profile(call)
@@ -262,14 +248,13 @@ def show_history(call):
 
 @bot.callback_query_handler(func=lambda call: call.data == 'favourite_btn')
 def show_favourite(call):
-    user = db.get_user(call.message.chat.id)
-    favourite = user.favourite
+    favourite = db.get_favourite(call.message.chat.id)
     text = 'Ваше избранное:\n'
-    if favourite:
+    if len(favourite)!=0:
         for event in favourite:
-            date = datetime.fromtimestamp(event[1])
-            text += f'{event[0]} - {date}\n'
-            bot.send_message(call.message.chat.id, text, parse_mode='HTML')
+            #date = datetime.fromtimestamp(event[1])
+            text += f'{event.request} - {event.date}\n'
+        bot.send_message(call.message.chat.id, text, parse_mode='HTML')
     else:
         bot.send_message(call.message.chat.id, "Избранные пусты!")
     profile(call)

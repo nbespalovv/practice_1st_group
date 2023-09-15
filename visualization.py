@@ -23,9 +23,10 @@ def draw_social_graph(actor_name):
     actor_id = result.fetchone()[0]
 
     # Получаем список фильмов, в которых снимался актер
-    query = text("SELECT id_film FROM actor WHERE id_actor = :actor_id")
+    query = text("SELECT id_film FROM film_actor WHERE id_actor = :actor_id")
     result = session.execute(query, params={"actor_id": actor_id})
-    films_temp = [row[0] for row in result.fetchall()]
+    wtf= result.fetchall()
+    films_temp = [row for row in result.fetchall()]
     films = []
     json_str = films_temp[0]  # Get the string from the list
     temp_list = json.loads(json_str)  # Parse the JSON string
@@ -53,4 +54,4 @@ def draw_social_graph(actor_name):
 
 
 # Пример использования
-draw_social_graph("Сэм Нил")
+# draw_social_graph("Сэм Нил")
