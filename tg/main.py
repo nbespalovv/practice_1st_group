@@ -3,7 +3,7 @@ from db import BotDB
 from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton,InlineKeyboardButton, InlineKeyboardMarkup
 from celery_project.parser.tasks import parse_website
 from datetime import datetime
-from visualization import draw_social_graph
+from graphVisualization import draw_social_graph
 
 token = '5995097596:AAFNDm8tv_31RkT7XbdeEupqrs8vezAUlwM'
 bot = TeleBot(token)
@@ -141,8 +141,10 @@ def search_step(message, call):
     event = [actor,time]
 
     bot.send_message(message.chat.id, 'Поиск начат!!')
-    #parse_website(actor)
-    #draw_social_graph(actor)
+    parse_website(actor)
+    path = draw_social_graph(actor)
+    with open(path, 'rb') as graph_file:
+        bot.send_document(message.chat.id, graph_file)
     bot.send_message(message.chat.id, 'Поиск выполнен\nХотите добавить поиск в избранное?\nДа/Нет')
     bot.register_next_step_handler(message, history_add_step, call,event)
 def history_add_step(message, call, event):

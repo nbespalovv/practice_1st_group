@@ -4,9 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from models import Users, Logs, Films, Actor, Film_Country, Film_Genre, Parental_Control, Film_Actor, History, Base
 from datetime import datetime
 import json
+import re
 class BotDB:
     def __init__(self):
-        self.actors = Actor
+        self.actor = Actor
         self.film_actor = Film_Actor
         self.film_country = Film_Country
         self.film_genre = Film_Genre
@@ -107,22 +108,34 @@ class BotDB:
         self.session.add(film)
         self.session.commit()
 
-        for country in info_films[3]:
+        сountries = json.loads(info_films[3])
+        for country in сountries:
             film_country = Film_Country(id_film=film.id_film, country=country)
             self.session.add(film_country)
 
-        for genre in info_films[4]:
+        genres = json.loads(info_films[4])
+        for genre in genres:
             film_genre = Film_Genre(id_film=film.id_film, genre=genre)
             self.session.add(film_genre)
 
-        parental_control = Parental_Control(id_film=film.id_film, danger=info_films[2][0],
-                                            level=info_films[2][1])
-        self.session.add(parental_control)
+        if info_films[2]!='no parental control':
+            for key, value in info_films[2].items():
+                parental_control = Parental_Control(id_film=film.id_film, danger=key,
+                                                level=value)
+                self.session.add(parental_control)
+        else:
+            parental_control = Parental_Control(id_film=film.id_film, danger=None,
+                                                level=None)
+            self.session.add(parental_control)
+
 
         self.session.commit()
 
+    def get_film(self, id_film):
+        film = self.session.query(self.films).filter_by(id_film=id_film).first()
+        return film
     def actor_exist(self, id_actor):
-        actor = self.session.query(self.actors).filter_by(id_actor=id_actor).first()
+        actor = self.session.query(self.actor).filter_by(id_actor=id_actor).first()
         if actor:
             return True
         else:
@@ -141,16 +154,57 @@ class BotDB:
         self.session.add(actor)
         self.session.commit()
 
-        for id_film in info_actor[4]:
-            film_actor = Film_Actor(id_actor=actor.id_actor, id_film=id_film)
+    def add_actor_film(self,film,employee):
+        id_film = re.findall(r'\d+', film)
+        id_actor = re.findall(r'\d+', film)
+        result = self.session.query(self.film_actor).filter_by(id_film=id_film, id_actor=id_actor).first()
+        if result is not None:
+            film_actor = Film_Actor(id_actor=id_actor, id_film=id_film,amplua = employee[1])
             self.session.add(film_actor)
+            self.session.commit()
 
-        self.session.commit()
 
+    def get_actor(self, name:str):
+        actor = self.session.query(self.actor).filter_by(name=name).first()
+        return actor
+    def get_actor(self, id_actor:int):
+        actor = self.session.query(self.actor).filter_by(id_actor=id_actor).first()
+        return actor
+
+    def get_actors(self):
+        actor = self.session.query(self.actor)
+        return actor
+
+    def get_actors_by_films_with_amplua(self, id_film):
+        term_actors = self.session.query(self.film_actor).filter_by(id_film=id_film).all()
+        actors = []
+        for term_actor in term_actors:
+            actor = self.session.query(self.actor).filter_by(id_actor=term_actor.id_actor).first()
+            actors.append((actor,term_actor.amplua))
+        return actors
     #def add_actor_friend(self, info_actor):
         #    actor = Actor(id_actor = info_actor[0][0], name =info_actor[1], gender =info_actor[2], birthdate =info_actor[3], id_actor = info_actor[4][0])
         #    self.session.add(actor)
     #   self.session.commit()
+
+    def get_films_by_actor(self, id_actor):
+        term_films = self.session.query(self.film_actor).filter_by(id_actor = id_actor).all()
+        films = []
+        for term_film in term_films:
+            film = self.session.query(self.films).filter_by(id_film=term_film.id_film).first()
+            if film not in films:
+                films.append(film)
+        return films
+
+
+    def get_actors_by_films(self, id_film):
+        term_actors = self.session.query(self.film_actor).filter_by(id_film=id_film).all()
+        actors = []
+        for term_actor in term_actors:
+            actor = self.session.query(self.actor).filter_by(id_actor=term_actor.id_actor).first()
+            if actor not in actors:
+                actors.append(actor)
+        return actors
 
     def close(self):
         self.session.close()

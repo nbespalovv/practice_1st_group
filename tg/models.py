@@ -35,12 +35,14 @@ class Actor(Base):
     name = Column(String(250))
     gender = Column(String(10))
     birthdate = Column(Date)
+    is_checked = Column(Boolean, default=False)
 
 class Film_Actor(Base):
     __tablename__ = 'film_actor'
     id_film_actor = Column(Integer, primary_key=True, autoincrement=True)
     id_actor = Column(Integer, ForeignKey('actor.id_actor'))
     id_film = Column(Integer, ForeignKey('films.id_film'))
+    amplua = Column(String(40))
 
 
 class Users(Base):
